@@ -1,6 +1,6 @@
-numpy<1.24
-librosa==0.10.0.post2
-matplotlib<3.8
-scipy==1.9.3
+numpy>=2.3,<3
+librosa>=0.11,<2
+matplotlib>=3.10,<4
+scipy>=1.15,<2
 pyinstaller
 requests

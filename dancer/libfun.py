@@ -5,16 +5,33 @@ from scipy.optimize import minimize
 import matplotlib as mpl
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
-from audioread import audio_open
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 VERSION="?"
 HEATMAP = LinearSegmentedColormap.from_list("intensity",["w", "g", "orange", "r"], N=256)
 
 #TODO: Fix action lag that happens sometimes, maybe change hop?
+def _load_audio(audio_file):
+	# librosa/soundfile handles most formats; fall back to ffmpeg for the rest.
+	try:
+		return librosa.load(audio_file, sr=None, mono=True)
+	except Exception:
+		import subprocess, tempfile, os
+		fd, tmp = tempfile.mkstemp(suffix=".wav")
+		os.close(fd)
+		try:
+			subprocess.run(
+				["ffmpeg", "-y", "-i", str(audio_file), "-vn", "-ac", "1", tmp],
+				check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+			return librosa.load(tmp, sr=None, mono=True)
+		finally:
+			try:
+				os.remove(tmp)
+			except OSError:
+				pass
+
 def load_audio_data(audio_file, hop_length=1024, frame_length=1024, plp=True):
-	y, sr=None,None
-	with audio_open(audio_file) as f:
-		y, sr = librosa.load(f, sr=None, mono=True)
+	y, sr = _load_audio(audio_file)
 
 	# Compute beats
 	onset = None
@@ -145,11 +162,12 @@ def create_actions_barrier(data, start_time=0, overflow=0):
 
 	return actions
 
-def create_actions(data, energy_multiplier=1, pitch_range=100, overflow=0, amplitude_centering=0, center_offset=0):
+def create_actions(data, energy_multiplier=1, pitch_range=100, overflow=0, amplitude_centering=0, center_offset=0, energy_curve=1.0):
 	processed_data = data.copy()
 	
 	normalized_pitch = normalize(processed_data["pitch"])
 	normalized_energy = normalize(processed_data["energy"])
+	normalized_energy = np.power(normalized_energy, max(energy_curve, 0.01))
 	
 	pitch_bias = (100 - pitch_range) / 2
 	
@@ -220,14 +238,15 @@ def autoval(data, tpi=15, target_speed=300, v2above=0.6, opt=1):
 	return pres, eres
 
 #TODO: Do better
-def render_heatmap(data, energy, pitch, oor, amplitude_centering=0, center_offset=0, w=4096, h=128):
+def render_heatmap(data, energy, pitch, oor, amplitude_centering=0, center_offset=0, energy_curve=1.0, w=4096, h=128):
 	result = create_actions(
 		data, 
 		energy_multiplier=energy, 
 		pitch_range = pitch,
 		overflow = oor,
 		amplitude_centering=amplitude_centering,
-		center_offset=center_offset
+		center_offset=center_offset,
+		energy_curve=energy_curve
 	)
 	speeds = np.array([speed(result[i],result[i+1]) for i in range(len(result)-1)])
 	gradient = np.vstack([speeds]*h)
@@ -237,6 +256,7 @@ def render_heatmap(data, energy, pitch, oor, amplitude_centering=0, center_offse
 	plot = fig.add_subplot(111)
 	plot.imshow(gradient, cmap=HEATMAP, interpolation="lanczos")
 	plot.axis("off")
+	FigureCanvasAgg(fig)
 	return fig
 
 def dump_csv(f, data):

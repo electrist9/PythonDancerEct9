@@ -38,6 +38,13 @@ def cli_args():
 
 	def irange(min,max):
 		return range(min, max+1)
+	def frange(min,max):
+		def f(x):
+			v = float(x)
+			if not (min <= v <= max):
+				raise argparse.ArgumentTypeError(f"expected a float in [{min}, {max}], got {x}")
+			return v
+		return f
 	parser.add_argument("audio_path", nargs='?', default=None, help="Path to input media")
 	parser.add_argument("--out_path", help="Path to export funscript")
 	parser.add_argument("--csv", help="Export as CSV instead of funscript", action="store_true")
@@ -52,10 +59,11 @@ def cli_args():
 	parser.add_argument("--auto_per", type=int, default=65, metavar="[0-100]", choices=irange(0,100), help="The target percent of actions that should have a speed above the specified speed")
 	parser.add_argument("--auto_mod", type=int, default=2, metavar="[1-3]", choices=irange(1,3), help="Which optimizer to use (cmean, cmeanv2, clen)")
 	parser.add_argument("--pitch", type=int, default=100, metavar="[-200-200]", choices=irange(-200,200), help="The pitch")
-	parser.add_argument("--energy", type=int, default=10, metavar="[0-100]", choices=irange(0,100), help="The energy magnitude")
+	parser.add_argument("--energy", type=frange(0,100), default=10.0, metavar="[0-100]", help="The energy magnitude")
 	parser.add_argument("--amplitude_centering", type=int, default=0, metavar="[-100-100]", choices=irange(-100,100), help="Amplitude-based centering shift")
 	parser.add_argument("--overflow", type=int, default=0, metavar="[0-2]", choices=irange(0,2), help="Overflow type")
 	parser.add_argument("--center_offset", type=int, default=0, metavar="[-100-100]", choices=irange(-100,100), help="Center offset shift")
+	parser.add_argument("--energy_curve", type=float, default=1.0, metavar="[0-10]", help="Power applied to normalized energy (>1 widens dynamics)")
 
 	return parser
 

@@ -8,3 +8,7 @@ draw*
 test
 .venv
 config.json
+*.egg-info/
+*.egg-info
+.numba-cache/
+*.pyc

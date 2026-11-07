@@ -452,22 +452,22 @@ Thanks to you for using this software!""") )
 		OOR = cfg.get("OOR", "crop")
 		self.var_oor.set(OOR)
 		# Save
-		self.var_oor.trace("w", lambda *args: cfg.save("OOR", self.var_oor.get()))
+		self.var_oor.trace_add("write", lambda *args: cfg.save("OOR", self.var_oor.get()))
 		
 		# Load
 		AUTOMODE = cfg.get("automode", "meanv2")
 		self.var_automap.set(AUTOMODE)
 		# Save
-		self.var_automap.trace("w", lambda *args: cfg.save("automode", self.var_automap.get()))
+		self.var_automap.trace_add("write", lambda *args: cfg.save("automode", self.var_automap.get()))
 
 		# Load
 		self.pitch_spinbox_var.set(cfg.get("tpitch", self.pitch_spinbox_var.get()))
 		self.speed_spinbox_var.set(cfg.get("tspeed", self.speed_spinbox_var.get()))
 		self.per_spinbox_var.set(cfg.get("tper", self.per_spinbox_var.get()))
 		# Save
-		self.pitch_spinbox_var.trace("w", lambda *args: cfg.save("tpitch", self.pitch_spinbox_var.get()))
-		self.speed_spinbox_var.trace("w", lambda *args: cfg.save("tspeed", self.speed_spinbox_var.get()))
-		self.per_spinbox_var.trace("w", lambda *args: cfg.save("tper", self.per_spinbox_var.get()))
+		self.pitch_spinbox_var.trace_add("write", lambda *args: cfg.save("tpitch", self.pitch_spinbox_var.get()))
+		self.speed_spinbox_var.trace_add("write", lambda *args: cfg.save("tspeed", self.speed_spinbox_var.get()))
+		self.per_spinbox_var.trace_add("write", lambda *args: cfg.save("tper", self.per_spinbox_var.get()))
 
 		# Load
 		self.pitch_slider["value"] = cfg.get("pitch", self.pitch_slider.get())
@@ -497,22 +497,22 @@ Thanks to you for using this software!""") )
 		self.plp_var.set(cfg.get("plp", self.plp_var.get()))
 		self.map_var.set(cfg.get("automap", self.map_var.get()))
 		# Save
-		self.heatmap_var.trace("w", lambda *args: cfg.save("heatmap", self.heatmap_var.get()))
-		self.plp_var.trace("w", lambda *args: cfg.save("plp", self.plp_var.get()))
-		self.map_var.trace("w", lambda *args: cfg.save("automap", self.map_var.get()))
+		self.heatmap_var.trace_add("write", lambda *args: cfg.save("heatmap", self.heatmap_var.get()))
+		self.plp_var.trace_add("write", lambda *args: cfg.save("plp", self.plp_var.get()))
+		self.map_var.trace_add("write", lambda *args: cfg.save("automap", self.map_var.get()))
 
 		# Triggers
-		self.var_oor.trace("w", lambda *args: self.RenderWorker())
+		self.var_oor.trace_add("write", lambda *args: self.RenderWorker())
 
-		self.heatmap_var.trace("w", lambda *args: self.RenderWorker())
-		self.plp_var.trace("w", lambda *args: self.LoadWorker(self.fileName))
-		self.map_var.trace("w", lambda *args: self.cmapPressed())
+		self.heatmap_var.trace_add("write", lambda *args: self.RenderWorker())
+		self.plp_var.trace_add("write", lambda *args: self.LoadWorker(self.fileName))
+		self.map_var.trace_add("write", lambda *args: self.cmapPressed())
 
-		self.var_automap.trace("w", lambda *args: self.cmapPressed())
+		self.var_automap.trace_add("write", lambda *args: self.cmapPressed())
 
-		self.pitch_spinbox_var.trace("w", lambda *args: self.cmapPressed())
-		self.speed_spinbox_var.trace("w", lambda *args: self.cmapPressed())
-		self.per_spinbox_var.trace("w", lambda *args: self.cmapPressed())
+		self.pitch_spinbox_var.trace_add("write", lambda *args: self.cmapPressed())
+		self.speed_spinbox_var.trace_add("write", lambda *args: self.cmapPressed())
+		self.per_spinbox_var.trace_add("write", lambda *args: self.cmapPressed())
 
 		self.pitch_slider.configure(command=lambda x: [self.pitch_label.configure(text=f"{float(x):.0f}"), self.RenderWorker()])
 		self.energy_slider.configure(command=lambda x: [self.energy_label.configure(text=f"{float(x):.0f}"), self.RenderWorker()])
