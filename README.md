@@ -1,3 +1,5 @@
+**English** | [日本語](README.ja.md)
+
 A port of https://github.com/ncdxncdx/FunscriptDancer to python
 
 ![The UI running](example.PNG)
