@@ -32,6 +32,19 @@ python -m dancer.cli input.wav -m -y
 
 > `dancer` はパッケージとしてインストールされません。リポジトリの直下で実行するか、ルートを `PYTHONPATH` に追加してください。
 
+## 単一ファイル実行ファイルのビルド
+
+[PyInstaller](https://pyinstaller.org/)（`requirements.txt` に含まれます）で、Windows 向けの単一ファイル実行ファイルを作成できます。リポジトリの直下で実行してください:
+
+```
+pyinstaller gui.spec   # -> dist/PythonDancer-GUI.exe  （GUI 版）
+pyinstaller cli.spec   # -> dist/PythonDancer-CLI.exe  （CLI 版）
+```
+
+各実行ファイルは `--onefile` の自己完結型バンドル（約 150 MB）で、Python・NumPy・SciPy・librosa・numba・soundfile・matplotlib を同梱するため、実行に Python のインストールは不要です。初回起動は一時フォルダへ展開されるため遅くなります。
+
+> ffmpeg は同梱されません。`-c/--convert` や `.m4a` などの自動フォールバックには、引き続き `PATH` 上の ffmpeg が必要です。
+
 ## CLI
 
 以下は実際の出力です（プログラム自体は英語で表示します）。

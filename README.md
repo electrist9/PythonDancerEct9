@@ -32,6 +32,19 @@ python -m dancer.cli input.wav -m -y
 
 > `dancer` is not installed as a package, so run the commands from the repository root, or add the root to `PYTHONPATH`.
 
+## Build standalone executables
+
+Single-file Windows executables can be built with [PyInstaller](https://pyinstaller.org/) (already listed in `requirements.txt`). Run these from the repository root:
+
+```
+pyinstaller gui.spec   # -> dist/PythonDancer-GUI.exe  (graphical interface)
+pyinstaller cli.spec   # -> dist/PythonDancer-CLI.exe  (command-line interface)
+```
+
+Each executable is a self-contained `--onefile` bundle (about 150 MB) that includes Python, NumPy, SciPy, librosa, numba, soundfile and matplotlib, so no Python installation is needed to run it. The first launch is slower because the bundle unpacks itself to a temporary folder.
+
+> ffmpeg is **not** bundled. The executables still require ffmpeg on your `PATH` for `-c/--convert` and for the automatic fallback on formats such as `.m4a`.
+
 ## CLI
 
 ```
