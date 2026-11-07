@@ -4,7 +4,20 @@ https://github.com/ncdxncdx/FunscriptDancer の Python への移植です。
 
 ![UI 起動例](example.PNG)
 
+## クイックスタート
+
+**Python がインストールされていない場合**は、[最新リリース](https://github.com/electrist9/PythonDancerEct9/releases/latest)から Windows 用の実行ファイルをダウンロードして、そのまま実行できます。実行ファイルは自己完結型で、Python のインストールは不要です:
+
+- `PythonDancer-GUI.exe` — ダブルクリックで GUI が起動します。
+- `PythonDancer-CLI.exe` — ターミナルから実行します（例: `PythonDancer-CLI.exe input.wav -m -y`）。
+
+> ffmpeg は引き続き `PATH` が必要です（`-c/--convert` や `.m4a` などの読み込みに使用されます。上記の[動作要件](#動作要件)を参照）。
+
+**Python 環境がありソースから実行する場合**は、下記の[インストールと実行](#インストールと実行)を参照してください。
+
 ## 動作要件
+
+以下はソースから実行する場合の要件です。プリビルドの実行ファイルは Python のインストールを必要としません（上記の ffmpeg のみ必要です）。
 
 - Python 3.11 以上（3.14 で動作確認済み）
 - `PATH` に登録した [ffmpeg](https://ffmpeg.org/download.html)。`-c/--convert` で使用されるほか、直接読み込めない音声形式（例: `.m4a`）の場合は自動的にフォールバックとして使われます。

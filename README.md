@@ -4,7 +4,20 @@ A port of https://github.com/ncdxncdx/FunscriptDancer to python
 
 ![The UI running](example.PNG)
 
+## Quick start
+
+**No Python installed?** Download the pre-built Windows executables from the [latest release](https://github.com/electrist9/PythonDancerEct9/releases/latest) and run them directly. They are self-contained and need no Python installation:
+
+- `PythonDancer-GUI.exe` — double-click to open the graphical interface.
+- `PythonDancer-CLI.exe` — run from a terminal, for example `PythonDancer-CLI.exe input.wav -m -y`.
+
+> ffmpeg is still required on your `PATH` for `-c/--convert` and for reading formats such as `.m4a` (see [Requirements](#requirements)).
+
+**Have Python and want to run from source?** See [Install & run](#install--run) below.
+
 ## Requirements
+
+These apply when running from source. The pre-built executables need no Python installation (only ffmpeg, as noted above).
 
 - Python 3.11 or newer (tested on 3.14)
 - [ffmpeg](https://ffmpeg.org/download.html) on your `PATH`. It is used by `-c/--convert` and as an automatic fallback when an audio file cannot be read directly (for example `.m4a`).
