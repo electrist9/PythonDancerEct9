@@ -126,7 +126,7 @@ class LoadWorker(ImageWorker):
 class RenderWorker(ImageWorker):
 	done = None
 
-	def __init__(self, size, data, energy_mult, pitch_offset, overflow, heatmap, automode, amplitude_centering, center_offset):
+	def __init__(self, size, data, energy_mult, pitch_offset, overflow, heatmap, automode, amplitude_centering, center_offset, energy_curve):
 		super().__init__()
 		self.w, self.h = size
 		self.data = data
@@ -137,6 +137,7 @@ class RenderWorker(ImageWorker):
 		self.automode = automode
 		self.amplitude_centering = amplitude_centering
 		self.center_offset = center_offset
+		self.energy_curve = energy_curve
 
 	def run(self):
 		# Calculate data in thread, do not touch GUI or Figures
@@ -153,7 +154,8 @@ class RenderWorker(ImageWorker):
 					pitch_range=self.pitch_offset,
 					overflow=self.overflow,
 					amplitude_centering=self.amplitude_centering,
-					center_offset=self.center_offset
+					center_offset=self.center_offset,
+					energy_curve=self.energy_curve
 				)
 			except Exception as e:
 				print(e)
@@ -207,8 +209,8 @@ class MainWindow(tk.Tk):
 		super().__init__()
 
 		self.title(f"PythonDancer {VERSION}")
-		self.geometry("900x980")
-		self.minsize(900, 980)
+		self.geometry("1100x980")
+		self.minsize(1100, 980)
 
 		# Central widget layout
 		central_frame = ttk.Frame(self)
@@ -284,7 +286,7 @@ class MainWindow(tk.Tk):
 		# Settings GroupBox
 		self.settings_group = ttk.LabelFrame(central_frame, text="Settings")
 		self.settings_group.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-		self.settings_group.columnconfigure(4, weight=1)
+		self.settings_group.columnconfigure(5, weight=1)
 
 		pitch_group = ttk.LabelFrame(self.settings_group, text="Pitch -> Offset")
 		pitch_group.grid(row=0, column=0, sticky="ns", padx=5, pady=5)
@@ -322,8 +324,17 @@ class MainWindow(tk.Tk):
 		self.center_label = ttk.Label(center_offset_group, text="0")
 		self.center_label.grid(row=1, column=0)
 
+		energy_curve_group = ttk.LabelFrame(self.settings_group, text="Energy Curve")
+		energy_curve_group.grid(row=0, column=4, sticky="ns", padx=5, pady=5)
+		energy_curve_group.rowconfigure(0, weight=1)
+
+		self.energy_curve_slider = ttk.Scale(energy_curve_group, orient=tk.VERTICAL, from_=10, to=0, value=1.0)
+		self.energy_curve_slider.grid(row=0, column=0, sticky="ns")
+		self.energy_curve_label = ttk.Label(energy_curve_group, text="1.00")
+		self.energy_curve_label.grid(row=1, column=0)
+
 		options_group = ttk.LabelFrame(self.settings_group, text="Options")
-		options_group.grid(row=0, column=4, sticky="ew", padx=5, pady=5)
+		options_group.grid(row=0, column=5, sticky="ew", padx=5, pady=5)
 		options_group.columnconfigure(1, weight=1)
 		options_group.rowconfigure(0, weight=1)
 
@@ -474,23 +485,27 @@ Thanks to you for using this software!""") )
 		self.energy_slider["value"] = cfg.get("energy", self.energy_slider.get())
 		self.amplitude_centering_slider["value"] = cfg.get("amplitude_centering", self.amplitude_centering_slider.get())
 		self.center_offset_slider["value"] = cfg.get("center_offset", self.center_offset_slider.get())
+		self.energy_curve_slider["value"] = cfg.get("energy_curve", self.energy_curve_slider.get())
 		# Save
 		self.pitch_slider.bind("<ButtonRelease-1>", lambda x: cfg.save("pitch", self.pitch_slider.get()))
 		self.energy_slider.bind("<ButtonRelease-1>", lambda x: cfg.save("energy", self.energy_slider.get()))
 		self.amplitude_centering_slider.bind("<ButtonRelease-1>", lambda x: cfg.save("amplitude_centering", self.amplitude_centering_slider.get()))
 		self.center_offset_slider.bind("<ButtonRelease-1>", lambda x: cfg.save("center_offset", self.center_offset_slider.get()))
+		self.energy_curve_slider.bind("<ButtonRelease-1>", lambda x: cfg.save("energy_curve", self.energy_curve_slider.get()))
 		
 		# Init labels
 		self.pitch_label.configure(text=f"{self.pitch_slider.get():.0f}")
 		self.energy_label.configure(text=f"{self.energy_slider.get():.0f}")
 		self.amp_label.configure(text=f"{self.amplitude_centering_slider.get():.0f}")
 		self.center_label.configure(text=f"{self.center_offset_slider.get():.0f}")
+		self.energy_curve_label.configure(text=f"{self.energy_curve_slider.get():.2f}")
 
 		# Focus bindings
 		self.pitch_slider.bind("<Button-1>", lambda x: self.pitch_slider.focus_set())
 		self.energy_slider.bind("<Button-1>", lambda x: self.energy_slider.focus_set())
 		self.amplitude_centering_slider.bind("<Button-1>", lambda x: self.amplitude_centering_slider.focus_set())
 		self.center_offset_slider.bind("<Button-1>", lambda x: self.center_offset_slider.focus_set())
+		self.energy_curve_slider.bind("<Button-1>", lambda x: self.energy_curve_slider.focus_set())
 
 		# Load
 		self.heatmap_var.set(cfg.get("heatmap", self.heatmap_var.get()))
@@ -518,6 +533,7 @@ Thanks to you for using this software!""") )
 		self.energy_slider.configure(command=lambda x: [self.energy_label.configure(text=f"{float(x):.0f}"), self.RenderWorker()])
 		self.amplitude_centering_slider.configure(command=lambda x: [self.amp_label.configure(text=f"{float(x):.0f}"), self.RenderWorker()])
 		self.center_offset_slider.configure(command=lambda x: [self.center_label.configure(text=f"{float(x):.0f}"), self.RenderWorker()])
+		self.energy_curve_slider.configure(command=lambda x: [self.energy_curve_label.configure(text=f"{float(x):.2f}"), self.RenderWorker()])
 
 		self.funscript_button.bind("<Button-1>", lambda x: self.bfunscriptPressed())
 		self.heatmap_button.bind("<Button-1>", lambda x: self.bheatmapPressed())
@@ -654,6 +670,7 @@ Thanks to you for using this software!""") )
 			self.Automode(),
 			self.amplitude_centering_slider.get(),
 			self.center_offset_slider.get(),
+			self.energy_curve_slider.get(),
 		)
 		thread = Thread(target=worker.run)
 

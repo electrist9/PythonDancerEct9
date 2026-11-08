@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+### Added
+- GUI に「Energy Curve」スライダーを追加しました。CLI の `--energy_curve` と同じ設定（0〜10、既定 1.0）を GUI で調整できるようにしました。値は `RenderWorker` 経由で `create_actions` に渡され、`config.json` に保存されます。
+
+### Changed
+- GUI ウィンドウの初期・最小サイズを 900×980 から 1100×980 に拡大しました。Energy Curve 列の追加で Options（Misc など）が詰まって表示切れしていたためです。
+
 ## [1.0.0] - 2026-11-07
 
 ### Added
