@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-08
+
 ### Added
 - GUI に「Energy Curve」スライダーを追加しました。CLI の `--energy_curve` と同じ設定（0〜10、既定 1.0）を GUI で調整できるようにしました。値は `RenderWorker` 経由で `create_actions` に渡され、`config.json` に保存されます。
 
@@ -29,5 +31,6 @@
 ### Notes
 - 検証に使用した実楽曲サンプルで動作を確認しました。
 
-[Unreleased]: https://github.com/electrist9/PythonDancerEct9/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/electrist9/PythonDancerEct9/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/electrist9/PythonDancerEct9/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/electrist9/PythonDancerEct9/releases/tag/v1.0.0
