@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-07
+
 ### Added
 - `--energy_curve` オプションを追加しました。正規化済みエネルギーにべき乗を適用し、値が 1 より大きいほど動作の強弱（緩急）が強調されます（例: 1.5〜3.0）。`create_actions` / `render_heatmap` に `energy_curve` 引数を追加し、CLI から渡せるようにしました。
 - オーディオ読み込みヘルパー `_load_audio` を追加しました。`librosa.load` で読み込めない形式は `ffmpeg` で一時 WAV に変換してフォールバックします（m4a 等で発生する `LibsndfileError` 対策）。
@@ -20,3 +22,6 @@
 
 ### Notes
 - 検証に使用した実楽曲サンプルで動作を確認しました。
+
+[Unreleased]: https://github.com/electrist9/PythonDancerEct9/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/electrist9/PythonDancerEct9/releases/tag/v1.0.0
